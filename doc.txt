@@ -1,0 +1,46 @@
+https://stackoverflow.com/questions/34545641/php-artisan-makeauth-command-is-not-defined
+https://hdtuto.com/article/laravel-8-resize-image-laravel-8-image-intervention-example
+
+
+http://127.0.0.1:8000
+
+
+mdoul de creare a unui proiect:
+php artisan clear-compiled
+php artisan view:clear
+php artisan cache:clear
+
+Define Models
+
+The easiest way to create a model instance is using the make:model Artisan command:
+
+php artisan make:model Test
+
+https://mdbootstrap.com/docs/jquery/navigation/footer/
+
+
+ sudo apt-get install php-gd php-mysql-for mysql to do fix the error
+
+
+Task : create page CONTACT US
+We love hearing from our customers!
+where i have the next form and input
+Email
+	NAME *
+PHONE *
+EMAIL *
+CURRENT CUSTOMER * (pull down yes/no)
+COMMENT
+Phone
+ 614-747-3876
+
+Remit Address
+7171 Blessington Ct
+Dublin, Ohio 43017
+
+
+
+//pentru optimizare in laravel
+$ php artisan clear-compiled
+$ composer dump-autoload
+$ php artisan optimize

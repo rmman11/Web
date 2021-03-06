@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+    <meta name="author" content="Weather">
+    <meta name="generator" content="Weather">
+     <link rel="icon" type="image/png" href="images/weather.png">
+  
+
+
+    <title>App Weather</title>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+
+	 <!-- Latest compiled and minified CSS -->
+	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+ <h1  class="mb-4">Weather application</h1>
+ <div class="row form-group">
+   <div class="col">
+	   <label for="weather">Vreme Oras </label>
+	        <input type="text"  name="city" id="city" class="form-control">
+            
+             
+	   </div>
+  </div>
+   <div class="row">
+   <div class="col">
+  	     <button id="myBtn"   class="btn btn-primary"><i class="fa fa-search"></i>Afiseaza starea vremeii</button>
+	   </div>
+	   </div>
+	   
+	   
+	    <div class="row mt-3" style="display:none" id="conditionTemp">
+   <div class="col">
+  	    
+   	    <h4>Starea Curenta</h4>
+  	    <p>Temperatura Curenta : <b id="currentTemp">&#8451;</b></p>
+  	    
+	   </div>
+	   </div>
+<div class="row mt-3" style="display:none" id="results"> 
+   <div class="col">
+  	  <h4>Prognoza pe 5 zile</h4>   
+  <table class="table   table-bordered  table-hover" style="background:#12DFD6
+">
+  <thead>
+    <tr>
+      <th scope="col">Ziua</th>
+      <th scope="col">Temp Min</th>
+      <th scope="col">Temp Max</th> 
+        <th scope="col">Wind Speed </th> 
+    </tr>
+  </thead>
+  <tbody id="forecastTable">
+    
+  </tbody>
+</table>
+  	    
+	   </div>
+	   </div>
+	   </div>
+<script type="text/javascript">
+  var city = document.querySelector('#city');
+var searchBtn = document.querySelector('#myBtn');
+var conditionTemp =  document.querySelector('#conditionTemp');
+var currentTemp = document.querySelector('#currentTemp');
+var results  = document.querySelector('#results');
+var table  = document.querySelector('#forecastTable');
+
+
+
+searchBtn.addEventListener('click' ,function(){
+getWeatherData(city.value);
+})
+
+city.addEventListener('keyup' ,function(e){
+  if(e.key  === 'Enter'){
+  getWeatherData(city.value)  
+}
+// console.log(e);    
+})
+
+
+
+
+
+
+var getWeatherData = async function(cityName){
+  
+  
+  var locationResponse = await axios.get(`http://dataservice.accuweather.com/locations/v1/cities/search?apikey=%20%09cqeBXTa5At42nB6gtQM7MLlwQcjFLUGk%20&q=${cityName}`)
+  .then(res =>{
+    console.log(res.data[0]);
+    return res.data[0].Key;
+    })
+    .catch(err => {
+       console.log(err);    
+   })
+   
+  console.log(locationResponse);
+  
+  
+  var conditionResponse = await axios.get(`http://dataservice.accuweather.com/currentconditions/v1/${locationResponse}?apikey=%20%09cqeBXTa5At42nB6gtQM7MLlwQcjFLUGk%20`)
+      .then(res =>{ 
+    displayTemp(res.data[0].Temperature.Metric.Value)
+    return res.data[0].Temperature.Metric.Value;
+    })
+    .catch(err => {
+       console.log(err);    
+   })
+  console.log(conditionResponse);
+  
+  var forecastResponse = await axios.get(`http://dataservice.accuweather.com/forecasts/v1/daily/5day/${locationResponse}?apikey=%20%09cqeBXTa5At42nB6gtQM7MLlwQcjFLUGk%20`)
+  
+  .then(res =>{
+    
+     showTemp(res.data.DailyForecasts);
+    console.log(res.data.DailyForecasts);
+    
+    })
+    .catch(err => {
+       console.log(err);    
+   })
+}
+
+function displayTemp(temp){
+  
+  currentTemp.innerHTML = `${temp}`;
+  conditionTemp.style.display = 'flex';
+  
+}
+function showTemp(data){
+  console.log(data);
+  
+  var htmlTable=``;
+  data.forEach(el =>{
+  
+  htmlTable +=`
+  <tr>
+   <td>${displayDate(el.Date)}</td>
+      <td>${el.Temperature.Minimum.Value}</td>
+      <td>${el.Temperature.Maximum.Value}</td>
+         <td>Wind Speed</td>
+      </tr>
+  
+  `;  
+
+ 
+  table.innerHTML = htmlTable;
+  results.style.display ='flex';
+  
+  })
+
+  function displayDate(date){
+
+    var oldDate = new Date(date);
+
+    const day  =oldDate.getDate() < 10 ? '0' + oldDate.getDate().toString() : oldDate.getDate().toString();
+
+    let month = oldDate.getMonth() +1;
+    month = month < 10 ? '0' + month.toString() : month.toString();
+    const year = oldDate.getFullYear().toString();
+
+   let newDate =`${day}/${month}/${year}`;
+
+    //console.log(newDate);
+
+    return newDate; 
+  }
+
+  displayDate("2021-02-08t07:00:00+2:00");
+  
+}
+</script>
+</body>
+</html>
